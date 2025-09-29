@@ -1,0 +1,5 @@
+# Aktifkan mod_rewrite
+RewriteEngine On
+
+# Atur file default saat folder dibuka
+DirectoryIndex pages/dashboard.php

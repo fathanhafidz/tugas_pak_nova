@@ -1,0 +1,216 @@
+<?php
+session_start();
+include '../config/base_url.php';
+
+// cek login
+if (!isset($_SESSION['id_users'])) {
+    header("Location: $base_url/pages/login.php");
+    exit;
+}
+
+// include layout
+include '../includes/appbar.php';
+include '../includes/sidebar.php';
+include '../config/koneksi.php';
+
+// ambil data barang
+$barang = mysqli_query($koneksi, "SELECT b.*, k.nama_kategori, s.nama_supplier 
+                                  FROM barang b
+                                  LEFT JOIN kategori k ON b.id_kategori = k.id_kategori
+                                  LEFT JOIN supplier s ON b.id_supplier = s.id_supplier
+                                  ORDER BY b.id_barang DESC");
+
+// dropdown kategori
+$kategori = mysqli_query($koneksi, "SELECT * FROM kategori ORDER BY nama_kategori ASC");
+
+// dropdown supplier
+$supplier = mysqli_query($koneksi, "SELECT * FROM supplier ORDER BY nama_supplier ASC");
+
+$current_page = basename($_SERVER['PHP_SELF']);
+?>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Manajemen Barang</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+  <style>
+    body {
+      padding-top: 56px;
+      padding-left: 250px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container-fluid p-4">
+    <h2 class="mb-4">Manajemen Barang</h2>
+
+    <!-- Form tambah barang -->
+    <div class="card mb-4">
+      <div class="card-header bg-primary text-white">Tambah Barang</div>
+      <div class="card-body">
+        <form action="../backend/barang_proses.php" method="POST">
+          <input type="hidden" name="aksi" value="tambah">
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label class="form-label">Nama Barang</label>
+              <input type="text" name="nama_barang" class="form-control" required>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">Kategori</label>
+              <select name="id_kategori" class="form-control" required>
+                <option value="">-- Pilih Kategori --</option>
+                <?php 
+                $kategori_opt = mysqli_query($koneksi, "SELECT * FROM kategori ORDER BY nama_kategori ASC");
+                while ($row = mysqli_fetch_assoc($kategori_opt)) { ?>
+                  <option value="<?= $row['id_kategori'] ?>"><?= $row['nama_kategori'] ?></option>
+                <?php } ?>
+              </select>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">Supplier</label>
+              <select name="id_supplier" class="form-control" required>
+                <option value="">-- Pilih Supplier --</option>
+                <?php 
+                $supplier_opt = mysqli_query($koneksi, "SELECT * FROM supplier ORDER BY nama_supplier ASC");
+                while ($row = mysqli_fetch_assoc($supplier_opt)) { ?>
+                  <option value="<?= $row['id_supplier'] ?>"><?= $row['nama_supplier'] ?></option>
+                <?php } ?>
+              </select>
+            </div>
+          </div>
+
+          <div class="row mb-3">
+            <div class="col-md-4">
+              <label class="form-label">Stok</label>
+              <input type="number" name="stok" class="form-control" required>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Harga Jual</label>
+              <input type="number" step="0.01" name="harga_jual" class="form-control" required>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-success">Simpan</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Tabel daftar barang -->
+    <div class="card">
+      <div class="card-header bg-dark text-white">Daftar Barang</div>
+      <div class="card-body">
+        <table class="table table-bordered table-striped">
+          <thead>
+            <tr class="text-center">
+              <th>No</th>
+              <th>Nama Barang</th>
+              <th>Kategori</th>
+              <th>Supplier</th>
+              <th>Stok</th>
+              <th>Harga Jual</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody>
+            <?php 
+            $no = 1;
+            while ($row = mysqli_fetch_assoc($barang)) { ?>
+              <tr>
+                <td class="text-center"><?= $no++ ?></td>
+                <td><?= $row['nama_barang'] ?></td>
+                <td><?= $row['nama_kategori'] ?? '-' ?></td>
+                <td><?= $row['nama_supplier'] ?? '-' ?></td>
+                <td class="text-center"><?= $row['stok'] ?></td>
+                <td>Rp <?= number_format($row['harga_jual'], 2, ',', '.') ?></td>
+                <td class="text-center">
+                  <!-- Tombol Edit -->
+                  <button class="btn btn-sm btn-warning" 
+                          data-bs-toggle="modal" 
+                          data-bs-target="#editBarang<?= $row['id_barang'] ?>">
+                    <i class="bi bi-pencil"></i>
+                  </button>
+                  <!-- Tombol Hapus -->
+                  <a href="../backend/barang_proses.php?aksi=hapus&id=<?= $row['id_barang'] ?>" 
+                     onclick="return confirm('Yakin hapus data?')" 
+                     class="btn btn-sm btn-danger">
+                    <i class="bi bi-trash"></i>
+                  </a>
+                </td>
+              </tr>
+
+              <!-- Modal Edit Barang -->
+              <div class="modal fade" id="editBarang<?= $row['id_barang'] ?>" tabindex="-1">
+                <div class="modal-dialog modal-lg">
+                  <div class="modal-content">
+                    <form action="../backend/barang_proses.php" method="POST">
+                      <input type="hidden" name="aksi" value="edit">
+                      <input type="hidden" name="id_barang" value="<?= $row['id_barang'] ?>">
+                      <div class="modal-header bg-warning">
+                        <h5 class="modal-title">Edit Barang</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                      </div>
+                      <div class="modal-body">
+                        <div class="row mb-3">
+                          <div class="col-md-6">
+                            <label class="form-label">Nama Barang</label>
+                            <input type="text" name="nama_barang" value="<?= $row['nama_barang'] ?>" class="form-control" required>
+                          </div>
+                          <div class="col-md-3">
+                            <label class="form-label">Kategori</label>
+                            <select name="id_kategori" class="form-control" required>
+                              <option value="">-- Pilih Kategori --</option>
+                              <?php 
+                              $kategori_opt = mysqli_query($koneksi, "SELECT * FROM kategori ORDER BY nama_kategori ASC");
+                              while ($opt = mysqli_fetch_assoc($kategori_opt)) { ?>
+                                <option value="<?= $opt['id_kategori'] ?>" <?= ($opt['id_kategori']==$row['id_kategori'])?'selected':'' ?>>
+                                  <?= $opt['nama_kategori'] ?>
+                                </option>
+                              <?php } ?>
+                            </select>
+                          </div>
+                          <div class="col-md-3">
+                            <label class="form-label">Supplier</label>
+                            <select name="id_supplier" class="form-control" required>
+                              <option value="">-- Pilih Supplier --</option>
+                              <?php 
+                              $supplier_opt = mysqli_query($koneksi, "SELECT * FROM supplier ORDER BY nama_supplier ASC");
+                              while ($opt = mysqli_fetch_assoc($supplier_opt)) { ?>
+                                <option value="<?= $opt['id_supplier'] ?>" <?= ($opt['id_supplier']==$row['id_supplier'])?'selected':'' ?>>
+                                  <?= $opt['nama_supplier'] ?>
+                                </option>
+                              <?php } ?>
+                            </select>
+                          </div>
+                        </div>
+                        <div class="row mb-3">
+                          <div class="col-md-4">
+                            <label class="form-label">Stok</label>
+                            <input type="number" name="stok" value="<?= $row['stok'] ?>" class="form-control" required>
+                          </div>
+                          <div class="col-md-4">
+                            <label class="form-label">Harga Jual</label>
+                            <input type="number" step="0.01" name="harga_jual" value="<?= $row['harga_jual'] ?>" class="form-control" required>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="submit" class="btn btn-success">Update</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            <?php } ?>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
