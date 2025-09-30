@@ -15,7 +15,7 @@ $barang_masuk = $koneksi->query("
     SELECT bm.*, b.nama_barang 
     FROM barang_masuk bm 
     JOIN barang b ON bm.id_barang = b.id_barang 
-    ORDER BY bm.tanggal_masuk DESC
+    ORDER BY bm.tanggal_masuk DESC, bm.waktu_masuk DESC
 ");
 ?>
 <!DOCTYPE html>
@@ -24,6 +24,7 @@ $barang_masuk = $koneksi->query("
   <meta charset="UTF-8">
   <title>Barang Masuk</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <style>
     body {
       padding-top: 56px;   /* biar konten tidak ketiban navbar */
@@ -41,8 +42,10 @@ $barang_masuk = $koneksi->query("
       <label class="form-label">Barang</label>
       <select name="id_barang" class="form-control" required>
         <option value="">-- Pilih Barang --</option>
-        <?php while($row = $barang->fetch_assoc()){ ?>
-          <option value="<?= $row['id_barang'] ?>"><?= $row['nama_barang'] ?></option>
+        <?php 
+        $barang_opt = mysqli_query($koneksi, "SELECT * FROM barang WHERE status='aktif' ORDER BY nama_barang ASC");
+        while ($row = mysqli_fetch_assoc($barang_opt)) { ?>
+            <option value="<?= $row['id_barang'] ?>"><?= $row['nama_barang'] ?></option>
         <?php } ?>
       </select>
     </div>
@@ -59,12 +62,12 @@ $barang_masuk = $koneksi->query("
       <input type="text" name="keterangan" class="form-control">
     </div>
     <div class="col-md-1 d-flex align-items-end">
-      <button type="submit" class="btn btn-success w-100">Tambah</button>
+      <button type="submit" name="tambah" class="btn btn-success w-100">Tambah</button>
     </div>
   </form>
 
   <!-- Tabel Data Barang Masuk -->
-  <table class="table table-bordered">
+  <table class="table table-bordered table-hover">
     <thead class="table-dark">
       <tr>
         <th>ID</th>
@@ -72,8 +75,10 @@ $barang_masuk = $koneksi->query("
         <th>Jumlah</th>
         <th>Harga Beli</th>
         <th>Tanggal</th>
+        <th>Waktu</th>
         <th>Sisa</th>
         <th>Keterangan</th>
+        <th>Aksi</th>
       </tr>
     </thead>
     <tbody>
@@ -84,8 +89,52 @@ $barang_masuk = $koneksi->query("
         <td><?= $row['jumlah'] ?></td>
         <td>Rp <?= number_format($row['harga_beli_satuan'], 0, ',', '.') ?></td>
         <td><?= $row['tanggal_masuk'] ?></td>
+        <td><?= $row['waktu_masuk'] ?></td>
         <td><?= $row['jumlah_sisa'] ?></td>
         <td><?= $row['keterangan'] ?></td>
+        <td class="text-center">
+          <!-- Tombol Edit Modal -->
+          <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal<?= $row['id_masuk'] ?>">Edit</button>
+
+          <!-- Modal Edit -->
+          <div class="modal fade" id="editModal<?= $row['id_masuk'] ?>" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <form action="../backend/barang_masuk_proses.php" method="post">
+                  <div class="modal-header">
+                    <h5 class="modal-title">Edit Barang Masuk</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <input type="hidden" name="id_masuk" value="<?= $row['id_masuk'] ?>">
+                    <div class="mb-3">
+                      <label class="form-label">Jumlah</label>
+                      <input type="number" name="jumlah" value="<?= $row['jumlah'] ?>" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label">Harga Beli</label>
+                      <input type="number" step="0.01" name="harga_beli_satuan" value="<?= $row['harga_beli_satuan'] ?>" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label">Keterangan</label>
+                      <input type="text" name="keterangan" value="<?= $row['keterangan'] ?>" class="form-control">
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" name="edit" class="btn btn-primary">Simpan Perubahan</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tombol Hapus -->
+          <form action="../backend/barang_masuk_proses.php" method="post" class="d-inline" onsubmit="return confirm('Yakin hapus data ini?')">
+            <input type="hidden" name="id_masuk" value="<?= $row['id_masuk'] ?>">
+            <button type="submit" name="hapus" class="btn btn-danger btn-sm">Hapus</button>
+          </form>
+        </td>
       </tr>
       <?php } ?>
     </tbody>

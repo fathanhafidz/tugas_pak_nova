@@ -20,12 +20,6 @@ $barang = mysqli_query($koneksi, "SELECT b.*, k.nama_kategori, s.nama_supplier
                                   LEFT JOIN supplier s ON b.id_supplier = s.id_supplier
                                   ORDER BY b.id_barang DESC");
 
-// dropdown kategori
-$kategori = mysqli_query($koneksi, "SELECT * FROM kategori ORDER BY nama_kategori ASC");
-
-// dropdown supplier
-$supplier = mysqli_query($koneksi, "SELECT * FROM supplier ORDER BY nama_supplier ASC");
-
 $current_page = basename($_SERVER['PHP_SELF']);
 ?>
 <!DOCTYPE html>
@@ -46,6 +40,13 @@ $current_page = basename($_SERVER['PHP_SELF']);
   <div class="container-fluid p-4">
     <h2 class="mb-4">Manajemen Barang</h2>
 
+    <!-- Alert pesan -->
+    <?php if (isset($_GET['pesan']) && $_GET['pesan'] == 'gagal_nonaktif') { ?>
+      <div class="alert alert-warning">
+        Barang ini sudah dipakai di transaksi, tidak bisa dinonaktifkan.
+      </div>
+    <?php } ?>
+
     <!-- Form tambah barang -->
     <div class="card mb-4">
       <div class="card-header bg-primary text-white">Tambah Barang</div>
@@ -62,7 +63,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
               <select name="id_kategori" class="form-control" required>
                 <option value="">-- Pilih Kategori --</option>
                 <?php 
-                $kategori_opt = mysqli_query($koneksi, "SELECT * FROM kategori ORDER BY nama_kategori ASC");
+                $kategori_opt = mysqli_query($koneksi, "SELECT * FROM kategori WHERE status='aktif' ORDER BY nama_kategori ASC");
                 while ($row = mysqli_fetch_assoc($kategori_opt)) { ?>
                   <option value="<?= $row['id_kategori'] ?>"><?= $row['nama_kategori'] ?></option>
                 <?php } ?>
@@ -73,7 +74,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
               <select name="id_supplier" class="form-control" required>
                 <option value="">-- Pilih Supplier --</option>
                 <?php 
-                $supplier_opt = mysqli_query($koneksi, "SELECT * FROM supplier ORDER BY nama_supplier ASC");
+                $supplier_opt = mysqli_query($koneksi, "SELECT * FROM supplier WHERE status='aktif' ORDER BY nama_supplier ASC");
                 while ($row = mysqli_fetch_assoc($supplier_opt)) { ?>
                   <option value="<?= $row['id_supplier'] ?>"><?= $row['nama_supplier'] ?></option>
                 <?php } ?>
@@ -82,10 +83,6 @@ $current_page = basename($_SERVER['PHP_SELF']);
           </div>
 
           <div class="row mb-3">
-            <div class="col-md-4">
-              <label class="form-label">Stok</label>
-              <input type="number" name="stok" class="form-control" required>
-            </div>
             <div class="col-md-4">
               <label class="form-label">Harga Jual</label>
               <input type="number" step="0.01" name="harga_jual" class="form-control" required>
@@ -110,6 +107,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
               <th>Supplier</th>
               <th>Stok</th>
               <th>Harga Jual</th>
+              <th>Status</th>
               <th>Aksi</th>
             </tr>
           </thead>
@@ -125,18 +123,32 @@ $current_page = basename($_SERVER['PHP_SELF']);
                 <td class="text-center"><?= $row['stok'] ?></td>
                 <td>Rp <?= number_format($row['harga_jual'], 2, ',', '.') ?></td>
                 <td class="text-center">
+                  <?php if ($row['status'] == 'aktif') { ?>
+                    <span class="badge bg-success">Aktif</span>
+                  <?php } else { ?>
+                    <span class="badge bg-secondary">Nonaktif</span>
+                  <?php } ?>
+                </td>
+                <td class="text-center">
                   <!-- Tombol Edit -->
                   <button class="btn btn-sm btn-warning" 
                           data-bs-toggle="modal" 
                           data-bs-target="#editBarang<?= $row['id_barang'] ?>">
                     <i class="bi bi-pencil"></i>
                   </button>
-                  <!-- Tombol Hapus -->
-                  <a href="../backend/barang_proses.php?aksi=hapus&id=<?= $row['id_barang'] ?>" 
-                     onclick="return confirm('Yakin hapus data?')" 
-                     class="btn btn-sm btn-danger">
-                    <i class="bi bi-trash"></i>
-                  </a>
+
+                  <!-- Tombol Aktif/Nonaktif -->
+                  <?php if ($row['status'] == 'aktif') { ?>
+                    <a href="../backend/barang_proses.php?aksi=nonaktif&id=<?= $row['id_barang'] ?>" 
+                       class="btn btn-sm btn-secondary">
+                       <i class="bi bi-eye-slash"></i>
+                    </a>
+                  <?php } else { ?>
+                    <a href="../backend/barang_proses.php?aksi=aktif&id=<?= $row['id_barang'] ?>" 
+                       class="btn btn-sm btn-success">
+                       <i class="bi bi-eye"></i>
+                    </a>
+                  <?php } ?>
                 </td>
               </tr>
 
@@ -186,10 +198,6 @@ $current_page = basename($_SERVER['PHP_SELF']);
                         </div>
                         <div class="row mb-3">
                           <div class="col-md-4">
-                            <label class="form-label">Stok</label>
-                            <input type="number" name="stok" value="<?= $row['stok'] ?>" class="form-control" required>
-                          </div>
-                          <div class="col-md-4">
                             <label class="form-label">Harga Jual</label>
                             <input type="number" step="0.01" name="harga_jual" value="<?= $row['harga_jual'] ?>" class="form-control" required>
                           </div>
@@ -208,7 +216,6 @@ $current_page = basename($_SERVER['PHP_SELF']);
         </table>
       </div>
     </div>
-
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>

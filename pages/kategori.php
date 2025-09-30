@@ -5,13 +5,11 @@ include '../config/base_url.php';
 include '../includes/appbar.php';
 include '../includes/sidebar.php';
 
-// Cek login
 if (!isset($_SESSION['id_users'])) {
     header("Location: $base_url/pages/login.php");
     exit;
 }
 
-// Ambil data kategori
 $result = $koneksi->query("SELECT * FROM kategori ORDER BY id_kategori DESC");
 ?>
 <!DOCTYPE html>
@@ -22,8 +20,8 @@ $result = $koneksi->query("SELECT * FROM kategori ORDER BY id_kategori DESC");
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
   <style>
       body {
-      padding-top: 56px;   /* supaya konten tidak ketiban navbar */
-      padding-left: 250px; /* supaya konten tidak ketiban sidebar */
+      padding-top: 56px;
+      padding-left: 250px;
     }
   </style>
 </head>
@@ -31,6 +29,10 @@ $result = $koneksi->query("SELECT * FROM kategori ORDER BY id_kategori DESC");
 
 <div class="container mt-5">
   <h3 class="mb-3">Data Kategori</h3>
+
+  <?php if (isset($_SESSION['error'])) { ?>
+      <div class="alert alert-danger"><?= $_SESSION['error']; unset($_SESSION['error']); ?></div>
+  <?php } ?>
 
   <!-- Form Tambah -->
   <div class="card mb-4">
@@ -55,7 +57,8 @@ $result = $koneksi->query("SELECT * FROM kategori ORDER BY id_kategori DESC");
           <tr class="text-center">
             <th width="50">No</th>
             <th>Nama Kategori</th>
-            <th width="250">Aksi</th>
+            <th>Status</th>
+            <th width="350">Aksi</th>
           </tr>
         </thead>
         <tbody>
@@ -66,7 +69,11 @@ $result = $koneksi->query("SELECT * FROM kategori ORDER BY id_kategori DESC");
               <td class="text-center"><?= $no++ ?></td>
               <td><?= $row['nama_kategori'] ?></td>
               <td class="text-center">
-
+                <span class="badge <?= $row['status']=='aktif'?'bg-success':'bg-secondary' ?>">
+                  <?= ucfirst($row['status']) ?>
+                </span>
+              </td>
+              <td class="text-center">
                 <!-- Form Edit -->
                 <form action="<?= $base_url ?>/backend/kategori_proses.php" method="post" class="d-inline">
                   <input type="hidden" name="id_kategori" value="<?= $row['id_kategori'] ?>">
@@ -75,11 +82,15 @@ $result = $koneksi->query("SELECT * FROM kategori ORDER BY id_kategori DESC");
                   <button type="submit" name="edit" class="btn btn-warning btn-sm">Edit</button>
                 </form>
 
-                <!-- Hapus -->
+                <!-- Ubah Status -->
                 <form action="<?= $base_url ?>/backend/kategori_proses.php" method="post" class="d-inline">
                   <input type="hidden" name="id_kategori" value="<?= $row['id_kategori'] ?>">
-                  <button type="submit" name="hapus" onclick="return confirm('Yakin hapus kategori ini?')" 
-                          class="btn btn-danger btn-sm">Hapus</button>
+                  <input type="hidden" name="status" 
+                         value="<?= $row['status']=='aktif'?'nonaktif':'aktif' ?>">
+                  <button type="submit" name="ubah_status" 
+                          class="btn <?= $row['status']=='aktif'?'btn-danger':'btn-success' ?> btn-sm">
+                    <?= $row['status']=='aktif'?'Nonaktifkan':'Aktifkan' ?>
+                  </button>
                 </form>
               </td>
             </tr>

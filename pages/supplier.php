@@ -2,20 +2,16 @@
 session_start();
 include '../config/base_url.php';
 
-// cek login
 if (!isset($_SESSION['id_users'])) {
     header("Location: $base_url/pages/login.php");
     exit;
 }
 
-// include layout
 include '../includes/appbar.php';
 include '../includes/sidebar.php';
 include '../config/koneksi.php';
 
-// ambil data supplier
 $supplier = mysqli_query($koneksi, "SELECT * FROM supplier ORDER BY id_supplier DESC");
-$current_page = basename($_SERVER['PHP_SELF']);
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -35,6 +31,10 @@ $current_page = basename($_SERVER['PHP_SELF']);
 <body>
   <div class="container-fluid p-4">
     <h2 class="mb-4">Manajemen Supplier</h2>
+
+    <?php if (isset($_SESSION['error'])) { ?>
+      <div class="alert alert-danger"><?= $_SESSION['error']; unset($_SESSION['error']); ?></div>
+    <?php } ?>
 
     <!-- Form tambah supplier -->
     <div class="card mb-4">
@@ -72,6 +72,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
               <th>Nama Supplier</th>
               <th>Telepon</th>
               <th>Alamat</th>
+              <th>Status</th>
               <th>Aksi</th>
             </tr>
           </thead>
@@ -85,6 +86,11 @@ $current_page = basename($_SERVER['PHP_SELF']);
                 <td><?= $row['telepon'] ?></td>
                 <td><?= $row['alamat'] ?></td>
                 <td class="text-center">
+                  <span class="badge <?= $row['status']=='aktif'?'bg-success':'bg-secondary' ?>">
+                    <?= ucfirst($row['status']) ?>
+                  </span>
+                </td>
+                <td class="text-center">
                   <!-- Tombol Edit -->
                   <button class="btn btn-sm btn-warning" 
                           data-bs-toggle="modal" 
@@ -92,12 +98,17 @@ $current_page = basename($_SERVER['PHP_SELF']);
                     <i class="bi bi-pencil"></i>
                   </button>
 
-                  <!-- Tombol Hapus -->
-                  <a href="../backend/supplier_proses.php?aksi=hapus&id=<?= $row['id_supplier'] ?>" 
-                     onclick="return confirm('Yakin hapus data?')" 
-                     class="btn btn-sm btn-danger">
-                    <i class="bi bi-trash"></i>
-                  </a>
+                  <!-- Ubah Status -->
+                  <form action="../backend/supplier_proses.php" method="POST" class="d-inline">
+                    <input type="hidden" name="aksi" value="ubah_status">
+                    <input type="hidden" name="id_supplier" value="<?= $row['id_supplier'] ?>">
+                    <input type="hidden" name="status" 
+                           value="<?= $row['status']=='aktif'?'nonaktif':'aktif' ?>">
+                    <button type="submit" 
+                            class="btn <?= $row['status']=='aktif'?'btn-danger':'btn-success' ?> btn-sm">
+                      <?= $row['status']=='aktif'?'Nonaktifkan':'Aktifkan' ?>
+                    </button>
+                  </form>
                 </td>
               </tr>
 
@@ -134,13 +145,11 @@ $current_page = basename($_SERVER['PHP_SELF']);
                   </div>
                 </div>
               </div>
-              <!-- End Modal -->
             <?php } ?>
           </tbody>
         </table>
       </div>
     </div>
-
   </div>
 </body>
 </html>

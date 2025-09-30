@@ -11,7 +11,7 @@ if (!isset($_SESSION['id_users'])) {
 // Tambah kategori
 if (isset($_POST['tambah'])) {
     $nama = trim($_POST['nama_kategori']);
-    $stmt = $koneksi->prepare("INSERT INTO kategori (nama_kategori) VALUES (?)");
+    $stmt = $koneksi->prepare("INSERT INTO kategori (nama_kategori, status) VALUES (?, 'aktif')");
     $stmt->bind_param("s", $nama);
     $stmt->execute();
 
@@ -44,19 +44,35 @@ if (isset($_POST['edit'])) {
     exit;
 }
 
-// Hapus kategori
-if (isset($_POST['hapus'])) {
+// Ubah status kategori
+if (isset($_POST['ubah_status'])) {
     $id = $_POST['id_kategori'];
-    $stmt = $koneksi->prepare("DELETE FROM kategori WHERE id_kategori=?");
-    $stmt->bind_param("i", $id);
-    $stmt->execute();
+    $status_baru = $_POST['status'];
 
-    $aktivitas = "Hapus kategori";
-    $stmtLog = $koneksi->prepare("INSERT INTO activity_log (id_users, aktivitas, tabel, id_data) VALUES (?, ?, ?, ?)");
-    $tabel = "kategori";
-    $stmtLog->bind_param("issi", $_SESSION['id_users'], $aktivitas, $tabel, $id);
-    $stmtLog->execute();
+    // Cek apakah kategori dipakai di tabel lain (misalnya barang)
+    $cek = $koneksi->prepare("SELECT COUNT(*) FROM barang WHERE id_kategori=?");
+    $cek->bind_param("i", $id);
+    $cek->execute();
+    $cek->bind_result($jumlah);
+    $cek->fetch();
+    $cek->close();
+
+    if ($status_baru == "nonaktif" && $jumlah > 0) {
+        // Jika dipakai barang, tidak bisa dinonaktifkan
+        $_SESSION['error'] = "Kategori sedang dipakai barang, tidak bisa dinonaktifkan.";
+    } else {
+        $stmt = $koneksi->prepare("UPDATE kategori SET status=? WHERE id_kategori=?");
+        $stmt->bind_param("si", $status_baru, $id);
+        $stmt->execute();
+
+        $aktivitas = "Ubah status kategori menjadi $status_baru";
+        $stmtLog = $koneksi->prepare("INSERT INTO activity_log (id_users, aktivitas, tabel, id_data) VALUES (?, ?, ?, ?)");
+        $tabel = "kategori";
+        $stmtLog->bind_param("issi", $_SESSION['id_users'], $aktivitas, $tabel, $id);
+        $stmtLog->execute();
+    }
 
     header("Location: $base_url/pages/kategori.php");
     exit;
 }
+?>
