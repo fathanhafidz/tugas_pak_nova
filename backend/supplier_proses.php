@@ -40,8 +40,8 @@ if (isset($_POST['aksi']) && $_POST['aksi'] == 'ubah_status') {
     // cek apakah supplier dipakai di tabel barang_masuk atau barang_keluar
     $cek = $koneksi->prepare("
         SELECT 
-            (SELECT COUNT(*) FROM barang_masuk WHERE id_supplier=?) +
-            (SELECT COUNT(*) FROM barang_keluar WHERE id_supplier=?) AS jumlah
+            (SELECT COUNT(*) FROM barang WHERE id_supplier=?) +
+            (SELECT COUNT(*) FROM barang WHERE id_supplier=?) AS jumlah
     ");
     $cek->bind_param("ii", $id, $id);
     $cek->execute();

@@ -28,6 +28,7 @@ $barang_keluar = $koneksi->query("
   <title>Barang Keluar</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+
   <style>
     body {
       padding-top: 56px;   /* biar tidak ketiban navbar */
@@ -41,17 +42,34 @@ $barang_keluar = $koneksi->query("
   <h3 class="mb-4">Barang Keluar</h3>
 
   <!-- Alert Pesan -->
-  <?php if (isset($_GET['pesan'])): ?>
-    <?php if ($_GET['pesan'] == "sukses"): ?>
-      <div class="alert alert-success">Barang keluar berhasil ditambahkan!</div>
-    <?php elseif ($_GET['pesan'] == "stok_kurang"): ?>
-      <div class="alert alert-danger">Stok barang tidak mencukupi!</div>
-    <?php elseif ($_GET['pesan'] == "input_tidak_lengkap"): ?>
-      <div class="alert alert-warning">Input tidak lengkap!</div>
-    <?php elseif ($_GET['pesan'] == "jumlah_tidak_valid"): ?>
-      <div class="alert alert-warning">Jumlah barang tidak valid!</div>
-    <?php endif; ?>
+ <?php if (isset($_GET['pesan'])): ?>
+  <?php if ($_GET['pesan'] == 'harga_jual_belum_ditentukan'): ?>
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+      <strong>Peringatan!</strong> Harga jual barang belum ditentukan. 
+      Silakan atur harga jual terlebih dahulu di menu <b>Barang</b>.
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  
+  <?php elseif ($_GET['pesan'] == 'stok_kurang'): ?>
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+      <strong>Peringatan!</strong> Jumlah yang diminta melebihi stok tersedia.
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  
+  <?php elseif ($_GET['pesan'] == 'input_tidak_lengkap'): ?>
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+      <strong>Peringatan!</strong> Data yang Anda isi belum lengkap, silakan periksa kembali formulir Anda.
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+  <?php elseif ($_GET['pesan'] == 'sukses'): ?>
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+      <strong>Berhasil!</strong> Data barang keluar berhasil disimpan.
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
   <?php endif; ?>
+<?php endif; ?>
+
 
   <!-- Form Tambah Barang Keluar -->
   <div class="card mb-4">
@@ -144,5 +162,7 @@ $barang_keluar = $koneksi->query("
   </div>
 
 </div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
 </html>

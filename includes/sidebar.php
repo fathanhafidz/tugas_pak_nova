@@ -38,7 +38,7 @@ $level = $_SESSION['level'];
     <?php if ($level == 'admin') : ?>
       <hr>
       <li class="nav-item">
-        <a class="nav-link" href="<?= $base_url ?>/pages/users.php">👥 Manajemen User</a>
+        <a class="nav-link" href="<?= $base_url ?>/pages/manajemen_users.php">👥 Manajemen User</a>
       </li>
       <li class="nav-item">
         <a class="nav-link" href="<?= $base_url ?>/pages/activity_log.php">📑 Activity Log</a>

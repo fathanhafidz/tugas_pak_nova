@@ -23,7 +23,7 @@ if (isset($_POST['aksi']) && $_POST['aksi'] == 'edit') {
     $nama = mysqli_real_escape_string($koneksi, $_POST['nama_barang']);
     $id_kategori = !empty($_POST['id_kategori']) ? $_POST['id_kategori'] : "NULL";
     $id_supplier = !empty($_POST['id_supplier']) ? $_POST['id_supplier'] : "NULL";
-    $harga_jual = !empty($_POST['harga_jual']) ? $_POST['harga_jual'] : "NULL";
+    $harga_jual = !empty($_POST['harga_jual']) ? $_POST['harga_jual'] : "0";
 
     $query = "UPDATE barang SET 
                 nama_barang='$nama',

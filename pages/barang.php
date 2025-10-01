@@ -84,8 +84,12 @@ $current_page = basename($_SERVER['PHP_SELF']);
 
           <div class="row mb-3">
             <div class="col-md-4">
-              <label class="form-label">Harga Jual</label>
-              <input type="number" step="0.01" name="harga_jual" class="form-control" required>
+              <div class="form-group">
+    <label for="harga_jual">Harga Jual</label>
+    <input type="number" step="0.01" name="harga_jual" id="harga_jual" 
+           class="form-control" value="0.00">
+    <small class="form-text text-muted">Biarkan 0.00 jika belum ditentukan.</small>
+</div>
             </div>
           </div>
 
@@ -121,7 +125,8 @@ $current_page = basename($_SERVER['PHP_SELF']);
                 <td><?= $row['nama_kategori'] ?? '-' ?></td>
                 <td><?= $row['nama_supplier'] ?? '-' ?></td>
                 <td class="text-center"><?= $row['stok'] ?></td>
-                <td>Rp <?= number_format($row['harga_jual'], 2, ',', '.') ?></td>
+                <td>Rp <?= number_format((float) $row['harga_jual'], 2, ',', '.') ?></td>
+
                 <td class="text-center">
                   <?php if ($row['status'] == 'aktif') { ?>
                     <span class="badge bg-success">Aktif</span>
