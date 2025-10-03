@@ -41,7 +41,6 @@ $supplier = mysqli_query($koneksi, "SELECT * FROM supplier ORDER BY id_supplier 
       <div class="card-header bg-primary text-white">Tambah Supplier</div>
       <div class="card-body">
         <form action="../backend/supplier_proses.php" method="POST">
-          <input type="hidden" name="aksi" value="tambah">
           <div class="row mb-3">
             <div class="col-md-6">
               <label class="form-label">Nama Supplier</label>
@@ -56,7 +55,7 @@ $supplier = mysqli_query($koneksi, "SELECT * FROM supplier ORDER BY id_supplier 
             <label class="form-label">Alamat</label>
             <textarea name="alamat" class="form-control" required></textarea>
           </div>
-          <button type="submit" class="btn btn-success">Simpan</button>
+          <button type="submit" name="tambah" class="btn btn-success">Simpan</button>
         </form>
       </div>
     </div>
@@ -100,11 +99,10 @@ $supplier = mysqli_query($koneksi, "SELECT * FROM supplier ORDER BY id_supplier 
 
                   <!-- Ubah Status -->
                   <form action="../backend/supplier_proses.php" method="POST" class="d-inline">
-                    <input type="hidden" name="aksi" value="ubah_status">
                     <input type="hidden" name="id_supplier" value="<?= $row['id_supplier'] ?>">
                     <input type="hidden" name="status" 
                            value="<?= $row['status']=='aktif'?'nonaktif':'aktif' ?>">
-                    <button type="submit" 
+                    <button type="submit" name="ubah_status" class="btn ... btn-sm" 
                             class="btn <?= $row['status']=='aktif'?'btn-danger':'btn-success' ?> btn-sm">
                       <?= $row['status']=='aktif'?'Nonaktifkan':'Aktifkan' ?>
                     </button>
@@ -117,7 +115,6 @@ $supplier = mysqli_query($koneksi, "SELECT * FROM supplier ORDER BY id_supplier 
                 <div class="modal-dialog">
                   <div class="modal-content">
                     <form action="../backend/supplier_proses.php" method="POST">
-                      <input type="hidden" name="aksi" value="edit">
                       <input type="hidden" name="id_supplier" value="<?= $row['id_supplier'] ?>">
                       <div class="modal-header">
                         <h5 class="modal-title">Edit Supplier</h5>
@@ -139,7 +136,7 @@ $supplier = mysqli_query($koneksi, "SELECT * FROM supplier ORDER BY id_supplier 
                       </div>
                       <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                        <button type="submit" class="btn btn-primary">Simpan</button>
+                        <button type="submit" name="edit" class="btn btn-primary">Simpan</button>
                       </div>
                     </form>
                   </div>

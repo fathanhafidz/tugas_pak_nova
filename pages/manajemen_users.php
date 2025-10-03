@@ -25,7 +25,7 @@ $users = $koneksi->query("SELECT * FROM users ORDER BY id_users DESC");
     <style>
       body {
         padding-top: 56px;   /* biar isi gak ketiban navbar */
-        
+        padding-left: 250px;
       }
     </style>
 </head>
@@ -35,10 +35,10 @@ $users = $koneksi->query("SELECT * FROM users ORDER BY id_users DESC");
 <div class="container-fluid p-4">
    <div class="row">
       <!-- Sidebar -->
-      <nav class="col-md-1  d-none d-md-block bg-light sidebar">
+      <nav class="sidebar">
         <?php include '../includes/sidebar.php'; ?>
       </nav>
-      <main class="col-md-10 ms-sm-auto px-md-4 mt-4">
+      <main class="main">
     <h3>Manajemen User</h3>
 
     <!-- Alert Pesan -->
@@ -73,8 +73,8 @@ $users = $koneksi->query("SELECT * FROM users ORDER BY id_users DESC");
 
 
     <!-- form tambah user -->
-    <div class="card mb-3">
-        <div class="card-header">Tambah User</div>
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">Tambah User</div>
         <div class="card-body">
             <form action="<?= $base_url ?>/backend/manajemen_users_proses.php" method="POST">
                 <input type="hidden" name="aksi" value="tambah">
@@ -103,9 +103,9 @@ $users = $koneksi->query("SELECT * FROM users ORDER BY id_users DESC");
 
     <!-- daftar user -->
     <div class="card">
-        <div class="card-header">Daftar User</div>
+        <div class="card-header bg-dark text-white">Daftar User</div>
         <div class="card-body">
-            <table class="table table-bordered table-striped">
+            <table class="table table-bordered table-hover">
                 <thead>
                     <tr>
                         <th>ID</th>

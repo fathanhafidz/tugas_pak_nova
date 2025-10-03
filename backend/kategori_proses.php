@@ -15,16 +15,20 @@ if (isset($_POST['tambah'])) {
     $stmt->bind_param("s", $nama);
     $stmt->execute();
 
-    // log aktivitas
+    // Ambil ID kategori yang baru ditambahkan
+    $idBaru = $stmt->insert_id;
+
+    // log aktivitas dengan id_data
     $aktivitas = "Tambah kategori";
-    $stmtLog = $koneksi->prepare("INSERT INTO activity_log (id_users, aktivitas, tabel) VALUES (?, ?, ?)");
     $tabel = "kategori";
-    $stmtLog->bind_param("iss", $_SESSION['id_users'], $aktivitas, $tabel);
+    $stmtLog = $koneksi->prepare("INSERT INTO activity_log (id_users, aktivitas, tabel, id_data) VALUES (?, ?, ?, ?)");
+    $stmtLog->bind_param("issi", $_SESSION['id_users'], $aktivitas, $tabel, $idBaru);
     $stmtLog->execute();
 
     header("Location: $base_url/pages/kategori.php");
     exit;
 }
+
 
 // Edit kategori
 if (isset($_POST['edit'])) {

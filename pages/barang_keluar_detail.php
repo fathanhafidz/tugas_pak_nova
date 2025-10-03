@@ -79,7 +79,6 @@ $detail = $koneksi->query("
                 <td>Rp <?= number_format($d['harga_jual_satuan'],0,',','.') ?></td>
                 <td>
                   <form action="../backend/barang_keluar_detail_proses.php" method="POST" style="display:inline;">
-                    <input type="hidden" name="aksi" value="hapus">
                     <input type="hidden" name="id_detail" value="<?= $d['id_detail'] ?>">
                     <input type="hidden" name="id_keluar" value="<?= $id_keluar ?>">
                     <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Hapus detail ini?')">

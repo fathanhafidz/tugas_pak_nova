@@ -4,7 +4,7 @@ include '../config/koneksi.php';
 include '../config/base_url.php';
 
 // Tambah supplier
-if (isset($_POST['aksi']) && $_POST['aksi'] == 'tambah') {
+if (isset($_POST['tambah'])) {
     $nama = trim($_POST['nama_supplier']);
     $telepon = trim($_POST['telepon']);
     $alamat = trim($_POST['alamat']);
@@ -13,12 +13,21 @@ if (isset($_POST['aksi']) && $_POST['aksi'] == 'tambah') {
     $stmt->bind_param("sss", $nama, $telepon, $alamat);
     $stmt->execute();
 
+    // catat ke activity log
+    $id_users = $_SESSION['id_users'] ?? null;
+    $id_data = $koneksi->insert_id;
+    $aktivitas = "Tambah supplier";
+    $tabel = "supplier";
+    $log = $koneksi->prepare("INSERT INTO activity_log (id_users, aktivitas, tabel, id_data) VALUES (?, ?, ?, ?)");
+    $log->bind_param("issi", $id_users, $aktivitas, $tabel, $id_data);
+    $log->execute();
+
     header("Location: $base_url/pages/supplier.php");
     exit;
 }
 
 // Edit supplier
-if (isset($_POST['aksi']) && $_POST['aksi'] == 'edit') {
+if (isset($_POST['edit'])) {
     $id = $_POST['id_supplier'];
     $nama = trim($_POST['nama_supplier']);
     $telepon = trim($_POST['telepon']);
@@ -28,16 +37,24 @@ if (isset($_POST['aksi']) && $_POST['aksi'] == 'edit') {
     $stmt->bind_param("sssi", $nama, $telepon, $alamat, $id);
     $stmt->execute();
 
+    // catat ke activity log
+    $id_users = $_SESSION['id_users'] ?? null;
+    $aktivitas = "Edit supplier";
+    $tabel = "supplier";
+    $log = $koneksi->prepare("INSERT INTO activity_log (id_users, aktivitas, tabel, id_data) VALUES (?, ?, ?, ?)");
+    $log->bind_param("issi", $id_users, $aktivitas, $tabel, $id);
+    $log->execute();
+
     header("Location: $base_url/pages/supplier.php");
     exit;
 }
 
 // Ubah status supplier
-if (isset($_POST['aksi']) && $_POST['aksi'] == 'ubah_status') {
+if (isset($_POST['ubah_status'])) {
     $id = $_POST['id_supplier'];
     $status_baru = $_POST['status'];
 
-    // cek apakah supplier dipakai di tabel barang_masuk atau barang_keluar
+    // cek apakah supplier dipakai
     $cek = $koneksi->prepare("
         SELECT 
             (SELECT COUNT(*) FROM barang WHERE id_supplier=?) +
@@ -55,9 +72,16 @@ if (isset($_POST['aksi']) && $_POST['aksi'] == 'ubah_status') {
         $stmt = $koneksi->prepare("UPDATE supplier SET status=? WHERE id_supplier=?");
         $stmt->bind_param("si", $status_baru, $id);
         $stmt->execute();
+
+        // catat ke activity log
+        $id_users = $_SESSION['id_users'] ?? null;
+        $aktivitas = "Ubah status supplier ($status_baru)";
+        $tabel = "supplier";
+        $log = $koneksi->prepare("INSERT INTO activity_log (id_users, aktivitas, tabel, id_data) VALUES (?, ?, ?, ?)");
+        $log->bind_param("issi", $id_users, $aktivitas, $tabel, $id);
+        $log->execute();
     }
 
     header("Location: $base_url/pages/supplier.php");
     exit;
 }
-?>
