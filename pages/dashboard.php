@@ -23,13 +23,13 @@ include '../includes/sidebar.php';
     body {
       padding-top: 56px;
       padding-left: 250px;
-      background: linear-gradient(90deg,#6a11cb,#2575fc); /* sama seperti barang.php */
+      background: #ede7f6; /* sama seperti barang.php */
       color: #fff;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
     h2 {
-      color: #fff;
+      color: #222;
       font-weight: 600;
     }
 
@@ -97,7 +97,7 @@ include '../includes/sidebar.php';
         </div>
       </div>
       <div class="col-md-2">
-        <div class="card shadow bg-gradient-success">
+        <div class="card shadow bg-gradient-primary">
           <div class="card-body">
             <h6>Total Kategori</h6>
             <h4 id="totalKategori">0</h4>
@@ -105,7 +105,7 @@ include '../includes/sidebar.php';
         </div>
       </div>
       <div class="col-md-2">
-        <div class="card shadow bg-gradient-warning">
+        <div class="card shadow bg-gradient-primary">
           <div class="card-body">
             <h6>Total Supplier</h6>
             <h4 id="totalSupplier">0</h4>
@@ -113,7 +113,7 @@ include '../includes/sidebar.php';
         </div>
       </div>
       <div class="col-md-2">
-        <div class="card shadow bg-gradient-info">
+        <div class="card shadow bg-gradient-primary">
           <div class="card-body">
             <h6>Barang Masuk Bulan Ini</h6>
             <h4 id="barangMasukBulan">0</h4>
@@ -121,7 +121,7 @@ include '../includes/sidebar.php';
         </div>
       </div>
       <div class="col-md-2">
-        <div class="card shadow bg-gradient-secondary">
+        <div class="card shadow bg-gradient-primary">
           <div class="card-body">
             <h6>Barang Keluar Bulan Ini</h6>
             <h4 id="barangKeluarBulan">0</h4>
@@ -129,7 +129,7 @@ include '../includes/sidebar.php';
         </div>
       </div>
       <div class="col-md-2">
-        <div class="card shadow bg-gradient-danger">
+        <div class="card shadow bg-gradient-primary">
           <div class="card-body">
             <h6>Total Laba Bulan Ini</h6>
             <h4 id="labaBulan">0</h4>
@@ -163,23 +163,23 @@ include '../includes/sidebar.php';
       <div class="col-md-4">
         <div class="card shadow">
           <div class="card-header bg-gradient-info">Barang Masuk Terbaru</div>
-          <div class="card-body table-responsive">
+          <div class="card-body table-responsive bg-white">
             <table class="table table-sm table-striped" id="tableMasuk"></table>
           </div>
         </div>
       </div>
       <div class="col-md-4">
         <div class="card shadow">
-          <div class="card-header bg-gradient-success">Barang Keluar Terbaru</div>
-          <div class="card-body table-responsive">
+          <div class="card-header bg-gradient-info">Barang Keluar Terbaru</div>
+          <div class="card-body table-responsive bg-white">
             <table class="table table-sm table-striped" id="tableKeluar"></table>
           </div>
         </div>
       </div>
       <div class="col-md-4">
         <div class="card shadow">
-          <div class="card-header bg-gradient-secondary">Aktivitas Terakhir</div>
-          <div class="card-body table-responsive">
+          <div class="card-header bg-gradient-info">Aktivitas Terakhir</div>
+          <div class="card-body table-responsive bg-white">
             <table class="table table-sm table-striped" id="tableLog"></table>
           </div>
         </div>

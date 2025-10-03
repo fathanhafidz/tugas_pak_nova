@@ -25,12 +25,63 @@ $supplier = mysqli_query($koneksi, "SELECT * FROM supplier ORDER BY id_supplier 
     body {
       padding-top: 56px;
       padding-left: 250px;
+      background: #ede7f6;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
+
+    h2 {
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+    }
+
+    .card {
+      border: none;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    .card-header {
+      font-weight: 600;
+      color: #fff;
+      border-radius: 10px 10px 0 0;
+      background: linear-gradient(90deg,#6a11cb,#2575fc);
+    }
+
+    .btn {
+      border-radius: 8px;
+    }
+
+    /* Tabel */
+    .table {
+      color: #333;
+      vertical-align: middle;
+    }
+    .table thead {
+      background: linear-gradient(90deg,#6a11cb,#2575fc);
+      color: #fff;
+    }
+    .table-striped > tbody > tr:nth-of-type(odd) {
+      background-color: rgba(0,0,0,0.03);
+    }
+
+    /* Badge status */
+    .badge {
+      font-size: 0.75rem;
+      padding: 6px 10px;
+      border-radius: 12px;
+    }
+    .badge-aktif {
+      background: #6a11cb;
+    }
+    .badge-nonaktif {
+      background: #6c757d;
+    }
+    .bg-gradient-info      { background: linear-gradient(90deg,#00c6ff,#0072ff); }
   </style>
 </head>
 <body>
   <div class="container-fluid p-4">
-    <h2 class="mb-4">Manajemen Supplier</h2>
+    <h2>📦 Manajemen Supplier</h2>
 
     <?php if (isset($_SESSION['error'])) { ?>
       <div class="alert alert-danger"><?= $_SESSION['error']; unset($_SESSION['error']); ?></div>
@@ -38,7 +89,7 @@ $supplier = mysqli_query($koneksi, "SELECT * FROM supplier ORDER BY id_supplier 
 
     <!-- Form tambah supplier -->
     <div class="card mb-4">
-      <div class="card-header bg-primary text-white">Tambah Supplier</div>
+      <div class="card-header">Tambah Supplier</div>
       <div class="card-body">
         <form action="../backend/supplier_proses.php" method="POST">
           <div class="row mb-3">
@@ -55,16 +106,18 @@ $supplier = mysqli_query($koneksi, "SELECT * FROM supplier ORDER BY id_supplier 
             <label class="form-label">Alamat</label>
             <textarea name="alamat" class="form-control" required></textarea>
           </div>
-          <button type="submit" name="tambah" class="btn btn-success">Simpan</button>
+          <button type="submit" name="tambah" class="btn bg-gradient-info">
+            <i class="bi bi-save"></i> Simpan
+          </button>
         </form>
       </div>
     </div>
 
     <!-- Tabel daftar supplier -->
     <div class="card">
-      <div class="card-header bg-dark text-white">Daftar Supplier</div>
+      <div class="card-header">Daftar Supplier</div>
       <div class="card-body">
-        <table class="table table-bordered table-striped">
+        <table class="table table-striped">
           <thead>
             <tr class="text-center">
               <th>No</th>
@@ -85,7 +138,7 @@ $supplier = mysqli_query($koneksi, "SELECT * FROM supplier ORDER BY id_supplier 
                 <td><?= $row['telepon'] ?></td>
                 <td><?= $row['alamat'] ?></td>
                 <td class="text-center">
-                  <span class="badge <?= $row['status']=='aktif'?'bg-success':'bg-secondary' ?>">
+                  <span class="badge <?= $row['status']=='aktif'?'badge-aktif':'badge-nonaktif' ?>">
                     <?= ucfirst($row['status']) ?>
                   </span>
                 </td>
@@ -100,11 +153,10 @@ $supplier = mysqli_query($koneksi, "SELECT * FROM supplier ORDER BY id_supplier 
                   <!-- Ubah Status -->
                   <form action="../backend/supplier_proses.php" method="POST" class="d-inline">
                     <input type="hidden" name="id_supplier" value="<?= $row['id_supplier'] ?>">
-                    <input type="hidden" name="status" 
-                           value="<?= $row['status']=='aktif'?'nonaktif':'aktif' ?>">
-                    <button type="submit" name="ubah_status" class="btn ... btn-sm" 
-                            class="btn <?= $row['status']=='aktif'?'btn-danger':'btn-success' ?> btn-sm">
-                      <?= $row['status']=='aktif'?'Nonaktifkan':'Aktifkan' ?>
+                    <input type="hidden" name="status" value="<?= $row['status']=='aktif'?'nonaktif':'aktif' ?>">
+                    <button type="submit" name="ubah_status" 
+                      class="btn btn-sm <?= $row['status']=='aktif'?'btn-danger':'btn-success' ?>">
+                      <i class="bi <?= $row['status']=='aktif'?'bi-eye-slash':'bi-eye' ?>"></i>
                     </button>
                   </form>
                 </td>
