@@ -175,12 +175,17 @@ fetch("../backend/dashboard_proses.php")
     });
     document.getElementById('tableMasuk').innerHTML = masukHTML;
 
-    // ===== Tabel Keluar =====
-    let keluarHTML = "<tr><th>Tanggal</th><th>Barang</th><th>Jumlah</th></tr>";
-    data.keluar_terbaru.forEach(row => {
-      keluarHTML += `<tr><td>${row.tanggal_keluar}</td><td>${row.nama_barang ?? 'N/A'}</td><td>${row.jumlah_item ?? 0}</td></tr>`;
-    });
-    document.getElementById('tableKeluar').innerHTML = keluarHTML;
+   // Tabel Keluar Terbaru
+let keluarHTML = "<tr><th>Tanggal</th><th>Barang</th><th>Jumlah</th></tr>";
+data.keluar_terbaru.forEach(row => {
+  keluarHTML += `<tr>
+      <td>${row.tanggal_keluar}</td>
+      <td>${row.nama_barang}</td>
+      <td>${row.jumlah}</td>
+    </tr>`;
+});
+document.getElementById('tableKeluar').innerHTML = keluarHTML;
+
 
     // ===== Tabel Log =====
     let logHTML = "<tr><th>Tanggal</th><th>User</th><th>Aktivitas</th></tr>";
