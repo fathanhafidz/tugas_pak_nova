@@ -19,16 +19,57 @@ $result = $koneksi->query("SELECT * FROM kategori ORDER BY id_kategori DESC");
   <title>Data Kategori</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
   <style>
-      body {
+    body {
       padding-top: 56px;
       padding-left: 250px;
+      background-color: #ede7f6; /* pastel lavender */
+    }
+
+    .card {
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      background-color: #ffffff;
+    }
+
+    .card-header {
+      border-top-left-radius: 12px !important;
+      border-top-right-radius: 12px !important;
+      background: linear-gradient(90deg, #6a11cb, #2575fc);
+      color: #fff !important;
+    }
+
+    table {
+      background: #ffffff;
+    }
+
+    th {
+      background: #f3e5f5;
+    }
+
+    /* Tombol custom senada sidebar */
+    .btn-custom {
+      background: linear-gradient(90deg, #6a11cb, #2575fc);
+      color: #fff;
+      border: none;
+    }
+    .btn-custom:hover {
+      opacity: 0.9;
+      color: #fff;
+    }
+
+    /* Badge aktif & nonaktif pakai gradasi */
+    .badge-aktif {
+      background: linear-gradient(90deg, #6a11cb, #2575fc);
+    }
+    .badge-nonaktif {
+      background: #9e9e9e;
     }
   </style>
 </head>
-<body class="bg-light">
+<body>
 
 <div class="container mt-5">
-  <h3 class="mb-3">Data Kategori</h3>
+  <h3 class="mb-4 fw-bold text-dark">Data Kategori</h3>
 
   <?php if (isset($_SESSION['error'])) { ?>
       <div class="alert alert-danger"><?= $_SESSION['error']; unset($_SESSION['error']); ?></div>
@@ -36,23 +77,23 @@ $result = $koneksi->query("SELECT * FROM kategori ORDER BY id_kategori DESC");
 
   <!-- Form Tambah -->
   <div class="card mb-4">
-    <div class="card-header bg-primary text-white">Tambah Kategori</div>
+    <div class="card-header">Tambah Kategori</div>
     <div class="card-body">
       <form action="<?= $base_url ?>/backend/kategori_proses.php" method="post">
         <div class="mb-3">
           <label for="nama_kategori" class="form-label">Nama Kategori</label>
           <input type="text" name="nama_kategori" id="nama_kategori" class="form-control" required>
         </div>
-        <button type="submit" name="tambah" class="btn btn-success">Simpan</button>
+        <button type="submit" name="tambah" class="btn btn-custom">Simpan</button>
       </form>
     </div>
   </div>
 
   <!-- List Kategori -->
   <div class="card">
-    <div class="card-header bg-dark text-white">Daftar Kategori</div>
+    <div class="card-header">Daftar Kategori</div>
     <div class="card-body">
-      <table class="table table-bordered table-striped">
+      <table class="table table-bordered table-striped align-middle">
         <thead>
           <tr class="text-center">
             <th width="50">No</th>
@@ -69,7 +110,7 @@ $result = $koneksi->query("SELECT * FROM kategori ORDER BY id_kategori DESC");
               <td class="text-center"><?= $no++ ?></td>
               <td><?= $row['nama_kategori'] ?></td>
               <td class="text-center">
-                <span class="badge <?= $row['status']=='aktif'?'bg-success':'bg-secondary' ?>">
+                <span class="badge <?= $row['status']=='aktif'?'badge-aktif':'badge-nonaktif' ?>">
                   <?= ucfirst($row['status']) ?>
                 </span>
               </td>
@@ -88,7 +129,7 @@ $result = $koneksi->query("SELECT * FROM kategori ORDER BY id_kategori DESC");
                   <input type="hidden" name="status" 
                          value="<?= $row['status']=='aktif'?'nonaktif':'aktif' ?>">
                   <button type="submit" name="ubah_status" 
-                          class="btn <?= $row['status']=='aktif'?'btn-danger':'btn-success' ?> btn-sm">
+                          class="btn btn-custom btn-sm">
                     <?= $row['status']=='aktif'?'Nonaktifkan':'Aktifkan' ?>
                   </button>
                 </form>

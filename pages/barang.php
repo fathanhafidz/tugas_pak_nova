@@ -19,8 +19,6 @@ $barang = mysqli_query($koneksi, "SELECT b.*, k.nama_kategori, s.nama_supplier
                                   LEFT JOIN kategori k ON b.id_kategori = k.id_kategori
                                   LEFT JOIN supplier s ON b.id_supplier = s.id_supplier
                                   ORDER BY b.id_barang DESC");
-
-$current_page = basename($_SERVER['PHP_SELF']);
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -29,16 +27,90 @@ $current_page = basename($_SERVER['PHP_SELF']);
   <title>Manajemen Barang</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
-  <style>
+ <style>
     body {
       padding-top: 56px;
       padding-left: 250px;
+      background: #ede7f6; /* pastel ungu soft */
+      color: #333;
+    }
+    h2 {
+      font-weight: 600;
+      color: #222;
+    }
+    .card {
+      border: none;
+      border-radius: 12px;
+      background: #fff;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .card-header {
+      border-radius: 12px 12px 0 0;
+      font-weight: 600;
+      background: linear-gradient(90deg,#6a11cb,#2575fc);
+      color: #fff;
+    }
+    .table {
+      background: #fff;
+      vertical-align: middle;
+    }
+    .table thead {
+      background: #f3e5f5;
+    }
+    .table thead th {
+      color: #333;
+    }
+    .form-control, .form-select {
+      background-color: #fff;
+      border: 1px solid #ccc;
+      color: #333;
+    }
+    .form-control:focus, .form-select:focus {
+      border-color: #6a11cb;
+      box-shadow: 0 0 0 0.2rem rgba(106,17,203,.25);
+    }
+    /* tombol custom senada sidebar */
+    .btn-custom {
+      background: linear-gradient(90deg,#6a11cb,#2575fc);
+      border: none;
+      color: #fff;
+    }
+    .btn-custom:hover {
+      opacity: 0.9;
+      color: #fff;
+    }
+    .btn-warning {
+      background: #ffc107;
+      border: none;
+      color: #000;
+    }
+    .btn-secondary {
+      background: #6c757d;
+      border: none;
+      color: #fff;
+    }
+    .badge-aktif {
+      background: linear-gradient(90deg,#6a11cb,#2575fc);
+    }
+    .badge-nonaktif {
+      background: #9e9e9e;
+    }
+    .modal-content {
+      background: #fff;
+      color: #333;
+      border-radius: 12px;
+    }
+    .modal-header {
+      border-bottom: 1px solid #ddd;
+    }
+    .modal-footer {
+      border-top: 1px solid #ddd;
     }
   </style>
 </head>
 <body>
   <div class="container-fluid p-4">
-    <h2 class="mb-4">Manajemen Barang</h2>
+    <h2 class="mb-4">📦 Manajemen Barang</h2>
 
     <!-- Alert pesan -->
     <?php if (isset($_GET['pesan']) && $_GET['pesan'] == 'gagal_nonaktif') { ?>
@@ -49,7 +121,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
 
     <!-- Form tambah barang -->
     <div class="card mb-4">
-      <div class="card-header bg-primary text-white">Tambah Barang</div>
+      <div class="card-header">Tambah Barang</div>
       <div class="card-body">
         <form action="../backend/barang_proses.php" method="POST">
           <input type="hidden" name="aksi" value="tambah">
@@ -60,7 +132,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
             </div>
             <div class="col-md-3">
               <label class="form-label">Kategori</label>
-              <select name="id_kategori" class="form-control" required>
+              <select name="id_kategori" class="form-select" required>
                 <option value="">-- Pilih Kategori --</option>
                 <?php 
                 $kategori_opt = mysqli_query($koneksi, "SELECT * FROM kategori WHERE status='aktif' ORDER BY nama_kategori ASC");
@@ -71,7 +143,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
             </div>
             <div class="col-md-3">
               <label class="form-label">Supplier</label>
-              <select name="id_supplier" class="form-control" required>
+              <select name="id_supplier" class="form-select" required>
                 <option value="">-- Pilih Supplier --</option>
                 <?php 
                 $supplier_opt = mysqli_query($koneksi, "SELECT * FROM supplier WHERE status='aktif' ORDER BY nama_supplier ASC");
@@ -84,25 +156,22 @@ $current_page = basename($_SERVER['PHP_SELF']);
 
           <div class="row mb-3">
             <div class="col-md-4">
-              <div class="form-group">
-    <label for="harga_jual">Harga Jual</label>
-    <input type="number" step="0.01" name="harga_jual" id="harga_jual" 
-           class="form-control" value="0.00">
-    <small class="form-text text-muted">Biarkan 0.00 jika belum ditentukan.</small>
-</div>
+              <label class="form-label">Harga Jual</label>
+              <input type="number" step="0.01" name="harga_jual" class="form-control" value="0.00">
+              <small class="text-muted">Biarkan 0.00 jika belum ditentukan.</small>
             </div>
           </div>
 
-          <button type="submit" class="btn btn-success">Simpan</button>
+          <button type="submit" class="btn btn-custom">💾 Simpan</button>
         </form>
       </div>
     </div>
 
     <!-- Tabel daftar barang -->
     <div class="card">
-      <div class="card-header bg-dark text-white">Daftar Barang</div>
-      <div class="card-body">
-        <table class="table table-bordered table-striped">
+      <div class="card-header">Daftar Barang</div>
+      <div class="card-body table-responsive">
+        <table class="table table-bordered table-hover">
           <thead>
             <tr class="text-center">
               <th>No</th>
@@ -129,28 +198,21 @@ $current_page = basename($_SERVER['PHP_SELF']);
 
                 <td class="text-center">
                   <?php if ($row['status'] == 'aktif') { ?>
-                    <span class="badge bg-success">Aktif</span>
+                    <span class="badge badge-aktif">Aktif</span>
                   <?php } else { ?>
-                    <span class="badge bg-secondary">Nonaktif</span>
+                    <span class="badge badge-nonaktif">Nonaktif</span>
                   <?php } ?>
                 </td>
                 <td class="text-center">
-                  <!-- Tombol Edit -->
-                  <button class="btn btn-sm btn-warning" 
-                          data-bs-toggle="modal" 
-                          data-bs-target="#editBarang<?= $row['id_barang'] ?>">
+                  <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editBarang<?= $row['id_barang'] ?>">
                     <i class="bi bi-pencil"></i>
                   </button>
-
-                  <!-- Tombol Aktif/Nonaktif -->
                   <?php if ($row['status'] == 'aktif') { ?>
-                    <a href="../backend/barang_proses.php?aksi=nonaktif&id=<?= $row['id_barang'] ?>" 
-                       class="btn btn-sm btn-secondary">
+                    <a href="../backend/barang_proses.php?aksi=nonaktif&id=<?= $row['id_barang'] ?>" class="btn btn-sm btn-secondary">
                        <i class="bi bi-eye-slash"></i>
                     </a>
                   <?php } else { ?>
-                    <a href="../backend/barang_proses.php?aksi=aktif&id=<?= $row['id_barang'] ?>" 
-                       class="btn btn-sm btn-success">
+                    <a href="../backend/barang_proses.php?aksi=aktif&id=<?= $row['id_barang'] ?>" class="btn btn-sm btn-custom">
                        <i class="bi bi-eye"></i>
                     </a>
                   <?php } ?>
@@ -164,7 +226,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
                     <form action="../backend/barang_proses.php" method="POST">
                       <input type="hidden" name="aksi" value="edit">
                       <input type="hidden" name="id_barang" value="<?= $row['id_barang'] ?>">
-                      <div class="modal-header bg-warning">
+                      <div class="modal-header bg-warning text-dark">
                         <h5 class="modal-title">Edit Barang</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                       </div>
@@ -176,7 +238,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
                           </div>
                           <div class="col-md-3">
                             <label class="form-label">Kategori</label>
-                            <select name="id_kategori" class="form-control" required>
+                            <select name="id_kategori" class="form-select" required>
                               <option value="">-- Pilih Kategori --</option>
                               <?php 
                               $kategori_opt = mysqli_query($koneksi, "SELECT * FROM kategori ORDER BY nama_kategori ASC");
@@ -189,7 +251,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
                           </div>
                           <div class="col-md-3">
                             <label class="form-label">Supplier</label>
-                            <select name="id_supplier" class="form-control" required>
+                            <select name="id_supplier" class="form-select" required>
                               <option value="">-- Pilih Supplier --</option>
                               <?php 
                               $supplier_opt = mysqli_query($koneksi, "SELECT * FROM supplier ORDER BY nama_supplier ASC");
@@ -209,7 +271,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
                         </div>
                       </div>
                       <div class="modal-footer">
-                        <button type="submit" class="btn btn-success">Update</button>
+                        <button type="submit" class="btn btn-custom">Update</button>
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
                       </div>
                     </form>

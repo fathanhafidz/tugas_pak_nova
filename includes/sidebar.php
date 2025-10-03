@@ -6,7 +6,8 @@ include '../config/base_url.php';
 $level = $_SESSION['level'];
 ?>
 
-<div class="bg-light border-end position-fixed" style="top: 56px; left: 0; width: 250px; height: 100vh; overflow-y: auto;">
+<!-- Sidebar -->
+<div class="sidebar">
   <ul class="nav flex-column p-3">
     <li class="nav-item">
       <a class="nav-link" href="<?= $base_url ?>/pages/dashboard.php">📊 Dashboard</a>
@@ -46,3 +47,42 @@ $level = $_SESSION['level'];
     <?php endif; ?>
   </ul>
 </div>
+
+<!-- Inline CSS untuk dark sidebar -->
+<style>
+  body {
+    background: #1e1e2f;
+    color: #fff;
+    font-family: "Segoe UI", sans-serif;
+  }
+
+  .sidebar {
+    position: fixed;
+    top: 56px;
+    left: 0;
+    width: 250px;
+    height: 100vh;
+    background: linear-gradient(180deg, #6a11cb, #2575fc); /* gradient ungu → biru */
+    overflow-y: auto;
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.3);
+  }
+
+  .sidebar .nav-link {
+    color: #ddd;
+    padding: 12px 15px;
+    border-radius: 8px;
+    margin-bottom: 5px;
+    transition: all 0.3s ease;
+  }
+
+  .sidebar .nav-link:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+    text-decoration: none;
+    padding-left: 20px; /* animasi geser dikit */
+  }
+
+  .sidebar hr {
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+</style>

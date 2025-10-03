@@ -23,17 +23,73 @@ include '../includes/sidebar.php';
     body {
       padding-top: 56px;
       padding-left: 250px;
+      background: linear-gradient(90deg,#6a11cb,#2575fc); /* sama seperti barang.php */
+      color: #fff;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    h2 {
+      color: #fff;
+      font-weight: 600;
+    }
+
+    .card {
+      background: #2a2a40;
+      border: none;
+      border-radius: 12px;
+      color: #fff;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+    }
+
+    .card-header {
+      border-radius: 12px 12px 0 0;
+      font-weight: 600;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .card-body h6 {
+      font-size: 0.9rem;
+      color: #ddd;
+    }
+
+    .card-body h4 {
+      font-size: 1.4rem;
+      font-weight: bold;
+      color: #fff;
+    }
+
+    /* Warna khusus summary */
+    .bg-gradient-primary   { background: linear-gradient(90deg,#6a11cb,#2575fc); }
+    .bg-gradient-success   { background: linear-gradient(90deg,#11998e,#38ef7d); }
+    .bg-gradient-warning   { background: linear-gradient(90deg,#f7971e,#ffd200); color:#222; }
+    .bg-gradient-info      { background: linear-gradient(90deg,#00c6ff,#0072ff); }
+    .bg-gradient-danger    { background: linear-gradient(90deg,#ff416c,#ff4b2b); }
+    .bg-gradient-secondary { background: linear-gradient(90deg,#757f9a,#d7dde8); color:#222; }
+
+    /* Tabel dark elegan */
+    .table {
+      color: #fff;
+      vertical-align: middle;
+    }
+    .table thead {
+      background: #34344e;
+    }
+    .table thead th {
+      color: #ddd;
+    }
+    .table-striped > tbody > tr:nth-of-type(odd) {
+      background-color: rgba(255,255,255,0.05);
     }
   </style>
 </head>
 <body>
   <div class="container-fluid p-4">
-    <h2 class="mb-4">Dashboard</h2>
+    <h2 class="mb-4">📊 Dashboard</h2>
 
     <!-- Summary Card -->
-    <div class="row mb-4">
+    <div class="row mb-4 g-3">
       <div class="col-md-2">
-        <div class="card text-bg-primary shadow">
+        <div class="card shadow bg-gradient-primary">
           <div class="card-body">
             <h6>Total Barang</h6>
             <h4 id="totalBarang">0</h4>
@@ -41,7 +97,7 @@ include '../includes/sidebar.php';
         </div>
       </div>
       <div class="col-md-2">
-        <div class="card text-bg-success shadow">
+        <div class="card shadow bg-gradient-success">
           <div class="card-body">
             <h6>Total Kategori</h6>
             <h4 id="totalKategori">0</h4>
@@ -49,7 +105,7 @@ include '../includes/sidebar.php';
         </div>
       </div>
       <div class="col-md-2">
-        <div class="card text-bg-warning shadow">
+        <div class="card shadow bg-gradient-warning">
           <div class="card-body">
             <h6>Total Supplier</h6>
             <h4 id="totalSupplier">0</h4>
@@ -57,7 +113,7 @@ include '../includes/sidebar.php';
         </div>
       </div>
       <div class="col-md-2">
-        <div class="card text-bg-info shadow">
+        <div class="card shadow bg-gradient-info">
           <div class="card-body">
             <h6>Barang Masuk Bulan Ini</h6>
             <h4 id="barangMasukBulan">0</h4>
@@ -65,7 +121,7 @@ include '../includes/sidebar.php';
         </div>
       </div>
       <div class="col-md-2">
-        <div class="card text-bg-secondary shadow">
+        <div class="card shadow bg-gradient-secondary">
           <div class="card-body">
             <h6>Barang Keluar Bulan Ini</h6>
             <h4 id="barangKeluarBulan">0</h4>
@@ -73,7 +129,7 @@ include '../includes/sidebar.php';
         </div>
       </div>
       <div class="col-md-2">
-        <div class="card text-bg-danger shadow">
+        <div class="card shadow bg-gradient-danger">
           <div class="card-body">
             <h6>Total Laba Bulan Ini</h6>
             <h4 id="labaBulan">0</h4>
@@ -83,10 +139,10 @@ include '../includes/sidebar.php';
     </div>
 
     <!-- Grafik -->
-    <div class="row mb-4">
+    <div class="row mb-4 g-3">
       <div class="col-md-6">
         <div class="card shadow">
-          <div class="card-header bg-dark text-white">Barang Masuk vs Keluar</div>
+          <div class="card-header">📈 Barang Masuk vs Keluar</div>
           <div class="card-body">
             <canvas id="grafikMasukKeluar"></canvas>
           </div>
@@ -94,7 +150,7 @@ include '../includes/sidebar.php';
       </div>
       <div class="col-md-6">
         <div class="card shadow">
-          <div class="card-header bg-dark text-white">Laba per Bulan</div>
+          <div class="card-header">💰 Laba per Bulan</div>
           <div class="card-body">
             <canvas id="grafikLaba"></canvas>
           </div>
@@ -103,10 +159,10 @@ include '../includes/sidebar.php';
     </div>
 
     <!-- Tabel Ringkas -->
-    <div class="row">
+    <div class="row g-3">
       <div class="col-md-4">
         <div class="card shadow">
-          <div class="card-header bg-primary text-white">Barang Masuk Terbaru</div>
+          <div class="card-header bg-gradient-info">Barang Masuk Terbaru</div>
           <div class="card-body table-responsive">
             <table class="table table-sm table-striped" id="tableMasuk"></table>
           </div>
@@ -114,7 +170,7 @@ include '../includes/sidebar.php';
       </div>
       <div class="col-md-4">
         <div class="card shadow">
-          <div class="card-header bg-success text-white">Barang Keluar Terbaru</div>
+          <div class="card-header bg-gradient-success">Barang Keluar Terbaru</div>
           <div class="card-body table-responsive">
             <table class="table table-sm table-striped" id="tableKeluar"></table>
           </div>
@@ -122,7 +178,7 @@ include '../includes/sidebar.php';
       </div>
       <div class="col-md-4">
         <div class="card shadow">
-          <div class="card-header bg-secondary text-white">Aktivitas Terakhir</div>
+          <div class="card-header bg-gradient-secondary">Aktivitas Terakhir</div>
           <div class="card-body table-responsive">
             <table class="table table-sm table-striped" id="tableLog"></table>
           </div>
@@ -135,7 +191,7 @@ include '../includes/sidebar.php';
 fetch("../backend/dashboard_proses.php")
   .then(res => res.json())
   .then(data => {
-    // ===== Summary =====
+    // Summary
     document.getElementById('totalBarang').innerText = data.summary.total_barang;
     document.getElementById('totalKategori').innerText = data.summary.total_kategori;
     document.getElementById('totalSupplier').innerText = data.summary.total_supplier;
@@ -143,19 +199,20 @@ fetch("../backend/dashboard_proses.php")
     document.getElementById('barangKeluarBulan').innerText = data.summary.barang_keluar_bulan;
     document.getElementById('labaBulan').innerText = data.summary.laba_bulan;
 
-    // ===== Grafik Masuk vs Keluar =====
+    // Grafik Masuk vs Keluar
     new Chart(document.getElementById('grafikMasukKeluar'), {
       type: 'line',
       data: {
         labels: data.grafik.map(item => item.bulan),
         datasets: [
-          { label: 'Masuk', data: data.grafik.map(item => item.masuk), borderColor: 'blue', fill: false },
-          { label: 'Keluar', data: data.grafik.map(item => item.keluar), borderColor: 'red', fill: false }
+          { label: 'Masuk', data: data.grafik.map(item => item.masuk), borderColor: '#00c6ff', backgroundColor:'#00c6ff', fill: false },
+          { label: 'Keluar', data: data.grafik.map(item => item.keluar), borderColor: '#ff416c', backgroundColor:'#ff416c', fill: false }
         ]
-      }
+      },
+      options: { plugins:{ legend:{ labels:{ color:'#fff' } } }, scales:{ x:{ ticks:{color:'#fff'}}, y:{ticks:{color:'#fff'}} } }
     });
 
-    // ===== Grafik Laba =====
+    // Grafik Laba
     new Chart(document.getElementById('grafikLaba'), {
       type: 'bar',
       data: {
@@ -165,29 +222,25 @@ fetch("../backend/dashboard_proses.php")
           data: data.grafik_laba.map(item => item.laba),
           backgroundColor: 'rgba(75,192,192,0.7)'
         }]
-      }
+      },
+      options: { plugins:{ legend:{ labels:{ color:'#fff' } } }, scales:{ x:{ ticks:{color:'#fff'}}, y:{ticks:{color:'#fff'}} } }
     });
 
-    // ===== Tabel Masuk =====
+    // Tabel Masuk
     let masukHTML = "<tr><th>Tanggal</th><th>Barang</th><th>Jumlah</th></tr>";
     data.masuk_terbaru.forEach(row => {
       masukHTML += `<tr><td>${row.tanggal_masuk}</td><td>${row.nama_barang}</td><td>${row.jumlah}</td></tr>`;
     });
     document.getElementById('tableMasuk').innerHTML = masukHTML;
 
-   // Tabel Keluar Terbaru
-let keluarHTML = "<tr><th>Tanggal</th><th>Barang</th><th>Jumlah</th></tr>";
-data.keluar_terbaru.forEach(row => {
-  keluarHTML += `<tr>
-      <td>${row.tanggal_keluar}</td>
-      <td>${row.nama_barang}</td>
-      <td>${row.jumlah}</td>
-    </tr>`;
-});
-document.getElementById('tableKeluar').innerHTML = keluarHTML;
+    // Tabel Keluar
+    let keluarHTML = "<tr><th>Tanggal</th><th>Barang</th><th>Jumlah</th></tr>";
+    data.keluar_terbaru.forEach(row => {
+      keluarHTML += `<tr><td>${row.tanggal_keluar}</td><td>${row.nama_barang}</td><td>${row.jumlah}</td></tr>`;
+    });
+    document.getElementById('tableKeluar').innerHTML = keluarHTML;
 
-
-    // ===== Tabel Log =====
+    // Tabel Log
     let logHTML = "<tr><th>Tanggal</th><th>User</th><th>Aktivitas</th></tr>";
     data.log_terbaru.forEach(row => {
       logHTML += `<tr><td>${row.waktu}</td><td>${row.username}</td><td>${row.aktivitas}</td></tr>`;
