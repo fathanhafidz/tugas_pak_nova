@@ -101,11 +101,13 @@ $barang = mysqli_query($koneksi, "SELECT b.*, k.nama_kategori, s.nama_supplier
       border-radius: 12px;
     }
     .modal-header {
-      border-bottom: 1px solid #ddd;
+      background: linear-gradient(90deg,#6a11cb,#2575fc);
+      
     }
     .modal-footer {
       border-top: 1px solid #ddd;
     }
+    .bg-gradient-primary   { background: linear-gradient(90deg,#6a11cb,#2575fc); }
   </style>
 </head>
 <body>
@@ -114,8 +116,9 @@ $barang = mysqli_query($koneksi, "SELECT b.*, k.nama_kategori, s.nama_supplier
 
     <!-- Alert pesan -->
     <?php if (isset($_GET['pesan']) && $_GET['pesan'] == 'gagal_nonaktif') { ?>
-      <div class="alert alert-warning">
-        Barang ini sudah dipakai di transaksi, tidak bisa dinonaktifkan.
+      <div class="alert alert-warning alert-dismissible fade show">
+        <strong>Peringatan!</strong> Barang ini sudah dipakai di transaksi, tidak bisa dinonaktifkan.
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
       </div>
     <?php } ?>
 
@@ -226,7 +229,7 @@ $barang = mysqli_query($koneksi, "SELECT b.*, k.nama_kategori, s.nama_supplier
                     <form action="../backend/barang_proses.php" method="POST">
                       <input type="hidden" name="aksi" value="edit">
                       <input type="hidden" name="id_barang" value="<?= $row['id_barang'] ?>">
-                      <div class="modal-header bg-warning text-dark">
+                      <div class="modal-header">
                         <h5 class="modal-title">Edit Barang</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                       </div>

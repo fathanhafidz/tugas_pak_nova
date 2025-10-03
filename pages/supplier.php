@@ -77,6 +77,7 @@ $supplier = mysqli_query($koneksi, "SELECT * FROM supplier ORDER BY id_supplier 
       background: #6c757d;
     }
     .bg-gradient-info      { background: linear-gradient(90deg,#00c6ff,#0072ff); }
+    .bg-gradient-primary   { background: linear-gradient(90deg,#6a11cb,#2575fc); }
   </style>
 </head>
 <body>
@@ -106,7 +107,7 @@ $supplier = mysqli_query($koneksi, "SELECT * FROM supplier ORDER BY id_supplier 
             <label class="form-label">Alamat</label>
             <textarea name="alamat" class="form-control" required></textarea>
           </div>
-          <button type="submit" name="tambah" class="btn bg-gradient-info">
+          <button type="submit" name="tambah" class="btn bg-gradient-primary">
             <i class="bi bi-save"></i> Simpan
           </button>
         </form>

@@ -18,6 +18,7 @@ $result = $koneksi->query("SELECT * FROM kategori ORDER BY id_kategori DESC");
   <meta charset="UTF-8">
   <title>Data Kategori</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
   <style>
     body {
       padding-top: 56px;
@@ -72,7 +73,10 @@ $result = $koneksi->query("SELECT * FROM kategori ORDER BY id_kategori DESC");
   <h3 class="mb-4 fw-bold text-dark">Data Kategori</h3>
 
   <?php if (isset($_SESSION['error'])) { ?>
-      <div class="alert alert-danger"><?= $_SESSION['error']; unset($_SESSION['error']); ?></div>
+      <div class="alert alert-warning alert-dismissible fade show">
+        <strong>Peringatan!</strong> <?= $_SESSION['error']; unset($_SESSION['error']); ?>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
   <?php } ?>
 
   <!-- Form Tambah -->
