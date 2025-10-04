@@ -2,15 +2,15 @@
 session_start();
 include '../config/koneksi.php';
 
+// ambil id user login
+$id_users = $_SESSION['id_users'] ?? null;
+
 // ✅ Tambah barang masuk
 if (isset($_POST['id_barang']) && !isset($_POST['edit']) && !isset($_POST['hapus'])) {
     $id_barang   = $_POST['id_barang'];
     $jumlah      = $_POST['jumlah'];
     $harga_beli  = $_POST['harga_beli_satuan'];
     $keterangan  = $_POST['keterangan'];
-
-    $tanggal = date("Y-m-d");
-    $waktu   = date("H:i:s");
 
     // cek status barang
     $cek = $koneksi->prepare("SELECT status FROM barang WHERE id_barang=?");
@@ -23,17 +23,27 @@ if (isset($_POST['id_barang']) && !isset($_POST['edit']) && !isset($_POST['hapus
         exit;
     }
 
-    // insert barang masuk
+    // insert barang masuk (waktu otomatis pakai CURRENT_TIMESTAMP)
     $stmt = $koneksi->prepare("INSERT INTO barang_masuk 
-        (id_barang, tanggal_masuk, waktu_masuk, jumlah, harga_beli_satuan, jumlah_sisa, keterangan) 
-        VALUES (?, ?, ?, ?, ?, ?, ?)");
-    $stmt->bind_param("issiiis", $id_barang, $tanggal, $waktu, $jumlah, $harga_beli, $jumlah, $keterangan);
+        (id_barang, jumlah, harga_beli_satuan, jumlah_sisa, keterangan)
+        VALUES (?, ?, ?, ?, ?)");
+    $stmt->bind_param("iiiss", $id_barang, $jumlah, $harga_beli, $jumlah, $keterangan);
     $stmt->execute();
 
-    // update stok
+    // ambil id data baru
+    $id_masuk = $stmt->insert_id;
+
+    // update stok barang
     $stmt2 = $koneksi->prepare("UPDATE barang SET stok = stok + ? WHERE id_barang=?");
     $stmt2->bind_param("ii", $jumlah, $id_barang);
     $stmt2->execute();
+
+    // 📝 catat ke activity_log
+    $aktivitas = "Menambahkan barang masuk (ID barang: $id_barang, jumlah: $jumlah, ID masuk: $id_masuk)";
+    $stmt3 = $koneksi->prepare("INSERT INTO activity_log (id_users, aktivitas, tabel, id_data) VALUES (?, ?, 'barang_masuk', ?)");
+    $stmt3->bind_param("isi", $id_users, $aktivitas, $id_masuk);
+    $stmt3->execute();
+    $stmt3->close();
 
     header("Location: ../pages/barang_masuk.php");
     exit;
@@ -66,6 +76,13 @@ if (isset($_POST['edit'])) {
         $stmt2 = $koneksi->prepare("UPDATE barang SET stok = stok + ? WHERE id_barang=?");
         $stmt2->bind_param("ii", $selisih, $lama['id_barang']);
         $stmt2->execute();
+
+        // 📝 catat ke activity_log
+        $aktivitas = "Mengedit barang masuk (ID masuk: $id_masuk, ID barang: {$lama['id_barang']}, jumlah baru: $jumlah)";
+        $stmt3 = $koneksi->prepare("INSERT INTO activity_log (id_users, aktivitas, tabel, id_data) VALUES (?, ?, 'barang_masuk', ?)");
+        $stmt3->bind_param("isi", $id_users, $aktivitas, $id_masuk);
+        $stmt3->execute();
+        $stmt3->close();
     }
 
     header("Location: ../pages/barang_masuk.php");
@@ -92,6 +109,13 @@ if (isset($_POST['hapus'])) {
         $stmt = $koneksi->prepare("DELETE FROM barang_masuk WHERE id_masuk=?");
         $stmt->bind_param("i", $id_masuk);
         $stmt->execute();
+
+        // 📝 catat ke activity_log
+        $aktivitas = "Menghapus barang masuk (ID masuk: $id_masuk, ID barang: {$lama['id_barang']})";
+        $stmt3 = $koneksi->prepare("INSERT INTO activity_log (id_users, aktivitas, tabel, id_data) VALUES (?, ?, 'barang_masuk', ?)");
+        $stmt3->bind_param("isi", $id_users, $aktivitas, $id_masuk);
+        $stmt3->execute();
+        $stmt3->close();
     }
 
     header("Location: ../pages/barang_masuk.php");

@@ -188,7 +188,8 @@ include '../includes/sidebar.php';
   </div>
 
 <script>
-fetch("../backend/dashboard_proses.php")
+   const base_url = "<?php echo $base_url; ?>";
+fetch(`${base_url}/backend/dashboard_proses.php`)
   .then(res => res.json())
   .then(data => {
     // Summary
@@ -226,19 +227,20 @@ fetch("../backend/dashboard_proses.php")
       options: { plugins:{ legend:{ labels:{ color:'#fff' } } }, scales:{ x:{ ticks:{color:'#fff'}}, y:{ticks:{color:'#fff'}} } }
     });
 
-    // Tabel Masuk
-    let masukHTML = "<tr><th>Tanggal</th><th>Barang</th><th>Jumlah</th></tr>";
-    data.masuk_terbaru.forEach(row => {
-      masukHTML += `<tr><td>${row.tanggal_masuk}</td><td>${row.nama_barang}</td><td>${row.jumlah}</td></tr>`;
-    });
-    document.getElementById('tableMasuk').innerHTML = masukHTML;
+  // Tabel Masuk
+let masukHTML = "<tr><th>Waktu Masuk</th><th>Barang</th><th>Jumlah</th></tr>";
+data.masuk_terbaru.forEach(row => {
+  masukHTML += `<tr><td>${row.waktu_masuk}</td><td>${row.nama_barang}</td><td>${row.jumlah}</td></tr>`;
+});
+document.getElementById('tableMasuk').innerHTML = masukHTML;
 
-    // Tabel Keluar
-    let keluarHTML = "<tr><th>Tanggal</th><th>Barang</th><th>Jumlah</th></tr>";
-    data.keluar_terbaru.forEach(row => {
-      keluarHTML += `<tr><td>${row.tanggal_keluar}</td><td>${row.nama_barang}</td><td>${row.jumlah}</td></tr>`;
-    });
-    document.getElementById('tableKeluar').innerHTML = keluarHTML;
+// Tabel Keluar
+let keluarHTML = "<tr><th>Waktu Keluar</th><th>Barang</th><th>Jumlah</th></tr>";
+data.keluar_terbaru.forEach(row => {
+  keluarHTML += `<tr><td>${row.waktu_keluar}</td><td>${row.nama_barang}</td><td>${row.jumlah}</td></tr>`;
+});
+document.getElementById('tableKeluar').innerHTML = keluarHTML;
+
 
     // Tabel Log
     let logHTML = "<tr><th>Tanggal</th><th>User</th><th>Aktivitas</th></tr>";

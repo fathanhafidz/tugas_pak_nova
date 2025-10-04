@@ -34,20 +34,27 @@ if (!$id_barang || $jumlah <= 0 || !$tujuan || !$keterangan) {
                 exit;
             } else {
                 // --- proses simpan barang keluar ---
+                $id_barang   = $_POST['id_barang'];
                 $tanggal = date('Y-m-d');
                 $waktu   = date('H:i:s');
-                $stmt = $koneksi->prepare("INSERT INTO barang_keluar (tanggal_keluar, waktu_keluar, tujuan, keterangan) VALUES (?, ?, ?, ?)");
-                $stmt->bind_param("ssss", $tanggal, $waktu, $tujuan, $keterangan);
-                $stmt->execute();
-                $id_keluar = $stmt->insert_id;
-                $stmt->close();
+               $stmt = $koneksi->prepare("
+    INSERT INTO barang_keluar (id_barang, waktu_keluar, tujuan, keterangan) 
+    VALUES (?, NOW(), ?, ?)
+");
+$stmt->bind_param("iss", $id_barang, $tujuan, $keterangan);
+$stmt->execute();
+$id_keluar = $stmt->insert_id;
+$stmt->close();
+
+
 
                 $sisa_keluar = $jumlah;
-                $batch = $koneksi->query("
-                    SELECT * FROM barang_masuk 
-                    WHERE id_barang='$id_barang' AND jumlah_sisa > 0 
-                    ORDER BY tanggal_masuk ASC, waktu_masuk ASC
-                ");
+               $batch = $koneksi->query("
+    SELECT * FROM barang_masuk 
+    WHERE id_barang='$id_barang' AND jumlah_sisa > 0 
+    ORDER BY waktu_masuk ASC
+");
+
 
                 while ($sisa_keluar > 0 && $bm = $batch->fetch_assoc()) {
                     $ambil = min($sisa_keluar, $bm['jumlah_sisa']);

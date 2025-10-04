@@ -15,8 +15,9 @@ $barang_masuk = $koneksi->query("
     SELECT bm.*, b.nama_barang 
     FROM barang_masuk bm 
     JOIN barang b ON bm.id_barang = b.id_barang 
-    ORDER BY bm.tanggal_masuk DESC, bm.waktu_masuk DESC
+    ORDER BY bm.waktu_masuk DESC
 ");
+
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -124,7 +125,7 @@ $barang_masuk = $koneksi->query("
             <th>Jumlah</th>
             <th>Harga Beli</th>
             <th>Tanggal</th>
-            <th>Waktu</th>
+            <th>jam</th>
             <th>Sisa</th>
             <th>Keterangan</th>
             <th>Aksi</th>
@@ -137,8 +138,8 @@ $barang_masuk = $koneksi->query("
             <td><?= $row['nama_barang'] ?></td>
             <td><?= $row['jumlah'] ?></td>
             <td>Rp <?= number_format($row['harga_beli_satuan'], 0, ',', '.') ?></td>
-            <td><?= $row['tanggal_masuk'] ?></td>
-            <td><?= $row['waktu_masuk'] ?></td>
+            <td><?= date('d-m-Y', strtotime($row['waktu_masuk'])) ?></td>
+            <td><?= date('H:i:s', strtotime($row['waktu_masuk'])) ?></td>
             <td><?= $row['jumlah_sisa'] ?></td>
             <td><?= $row['keterangan'] ?></td>
             <td class="text-center">

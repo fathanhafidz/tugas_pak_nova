@@ -16,10 +16,14 @@ $barang = $koneksi->query("SELECT * FROM barang ORDER BY nama_barang ASC");
 
 // ambil data barang keluar (header transaksi saja)
 $barang_keluar = $koneksi->query("
-    SELECT id_keluar, tanggal_keluar, waktu_keluar, tujuan, keterangan
-    FROM barang_keluar
-    ORDER BY tanggal_keluar DESC, waktu_keluar DESC
+    SELECT bk.id_keluar, bk.waktu_keluar, bk.tujuan, bk.keterangan,
+           b.nama_barang
+    FROM barang_keluar bk
+    LEFT JOIN barang b ON bk.id_barang = b.id_barang
+    ORDER BY bk.waktu_keluar DESC
 ");
+
+
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -118,8 +122,9 @@ $barang_keluar = $koneksi->query("
         <thead class="table-light">
           <tr>
             <th>#</th>
+            <th>Nama Barang</th>
             <th>Tanggal</th>
-            <th>Waktu</th>
+            <th>jam</th>
             <th>Tujuan</th>
             <th>Keterangan</th>
             <th>Aksi</th>
@@ -130,8 +135,9 @@ $barang_keluar = $koneksi->query("
             <?php $no=1; while ($bk = $barang_keluar->fetch_assoc()): ?>
               <tr>
                 <td><?= $no++ ?></td>
-                <td><?= $bk['tanggal_keluar'] ?></td>
-                <td><?= $bk['waktu_keluar'] ?></td>
+                <td><?= htmlspecialchars($bk['nama_barang'] ?? '-') ?></td>
+                <td><?= date('d-m-Y', strtotime($bk['waktu_keluar'])) ?></td>
+                <td><?= date('H:i:s', strtotime($bk['waktu_keluar'])) ?></td>
                 <td><?= $bk['tujuan'] ?? '-' ?></td>
                 <td><?= $bk['keterangan'] ?? '-' ?></td>
                 <td>

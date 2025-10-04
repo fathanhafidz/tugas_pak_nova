@@ -19,15 +19,24 @@ $id_keluar = intval($_GET['id_keluar']);
 
 // Ambil header transaksi
 $header = $koneksi->query("SELECT * FROM barang_keluar WHERE id_keluar=$id_keluar")->fetch_assoc();
+$header_waktu = $header['waktu_keluar'] ?? null;
+$header_tanggal = $header_waktu ? date('d-m-Y', strtotime($header_waktu)) : '-';
+$header_jam     = $header_waktu ? date('H:i:s', strtotime($header_waktu)) : '-';
+
+
 
 // Ambil detail transaksi
+
 $detail = $koneksi->query("
-    SELECT d.*, b.nama_barang, bm.tanggal_masuk 
+    SELECT d.*, bm.waktu_masuk, bm.id_barang, b.nama_barang 
     FROM barang_keluar_detail d
-    JOIN barang b ON d.id_barang = b.id_barang
     JOIN barang_masuk bm ON d.id_masuk = bm.id_masuk
+    LEFT JOIN barang b ON bm.id_barang = b.id_barang
     WHERE d.id_keluar = $id_keluar
+    ORDER BY bm.waktu_masuk ASC
 ");
+
+
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -46,20 +55,20 @@ $detail = $koneksi->query("
 <body>
 <div class="container-fluid p-4">
   <h3 class="mb-3">Detail Barang Keluar #<?= $id_keluar ?></h3>
-  <p><strong>Tanggal:</strong> <?= $header['tanggal_keluar'] ?> |
-     <strong>Waktu:</strong> <?= $header['waktu_keluar'] ?> |
+  <p><strong>Tanggal:</strong> <?= $header_tanggal ?> |
+   <strong>Waktu:</strong> <?= $header_jam ?> |
      <strong>Tujuan:</strong> <?= $header['tujuan'] ?? '-' ?> |
      <strong>Keterangan:</strong> <?= $header['keterangan'] ?? '-' ?>
   </p>
 
   <div class="card">
-    <div class="card-header bg-dark text-white">Daftar Barang</div>
+    <div class="card-header bg-dark text-white">Detail Barang Keluar</div>
     <div class="card-body">
       <table class="table table-bordered">
         <thead class="table-light">
           <tr>
             <th>#</th>
-            <th>Barang</th>
+            <!-- <th>Barang</th> -->
             <th>Batch Masuk</th>
             <th>Jumlah</th>
             <th>Harga Beli</th>
@@ -72,8 +81,12 @@ $detail = $koneksi->query("
             <?php $no=1; while($d = $detail->fetch_assoc()): ?>
               <tr>
                 <td><?= $no++ ?></td>
-                <td><?= $d['nama_barang'] ?></td>
-                <td><?= $d['tanggal_masuk'] ?> (ID: <?= $d['id_masuk'] ?>)</td>
+                <!-- <td><?= $d['nama_barang'] ?></td> -->
+               <?php
+  $tanggal_masuk = isset($d['waktu_masuk']) ? date('d-m-Y H:i:s', strtotime($d['waktu_masuk'])) : '-';
+?>
+<td><?= htmlspecialchars($tanggal_masuk) ?> (ID: <?= htmlspecialchars($d['id_masuk']) ?>)</td>
+
                 <td><?= $d['jumlah'] ?></td>
                 <td>Rp <?= number_format($d['harga_beli_satuan'],0,',','.') ?></td>
                 <td>Rp <?= number_format($d['harga_jual_satuan'],0,',','.') ?></td>

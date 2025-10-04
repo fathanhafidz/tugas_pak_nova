@@ -14,7 +14,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id_detail'], $_POST['
     $id_keluar = intval($_POST['id_keluar']);
 
     // ambil data detail
-    $detail = $koneksi->query("SELECT * FROM barang_keluar_detail WHERE id_detail=$id_detail")->fetch_assoc();
+    $detail = $koneksi->query("
+    SELECT d.*, bm.id_barang 
+    FROM barang_keluar_detail d
+    JOIN barang_masuk bm ON d.id_masuk = bm.id_masuk
+    WHERE d.id_detail = $id_detail
+")->fetch_assoc();
     if ($detail) {
         $id_barang = $detail['id_barang'];
         $jumlah   = $detail['jumlah'];
