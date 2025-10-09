@@ -3,7 +3,7 @@
 $host     = "localhost";       // nama host / server
 $username = "root";            // username MySQL (default XAMPP: root)
 $password = "";                // password MySQL (default XAMPP: kosong)
-$database = "manajemen_gudang_fifo"; // nama database yang sudah kamu buat
+$database = "manajemen_gudang_fifo2"; // nama database yang sudah kamu buat
 
 // buat koneksi
 $koneksi = new mysqli($host, $username, $password, $database);
